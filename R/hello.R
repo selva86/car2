@@ -17,7 +17,7 @@
 #' @description Calculate concordance and discordance percentages for a logit model
 #' @details Calculate the percentage of concordant and discordant pairs for a given logit model.
 #' @author Selva Prabhakaran
-#' @export CalcConcordance
+#' @export calcConcordance
 #' @param logitMod A logit model
 #' @return a list containing percentage of concordant pairs, percentage discordant pairs, percentage ties and No. of pairs.
 #' @examples
@@ -27,8 +27,8 @@
 #' rank   <- c (3, 3, 1, 4, 4, 2, 4, 4, 4, 3, 3, 3, 2, 2, 1)
 #' inputData  <- data.frame (accept, acad , sports, rank) # assemble the data frame
 #' logitModel <- glm(accept ~ ., family="binomial", data = inputData )
-#' CalcConcordance(logitModel)
-CalcConcordance <- function (logitMod){
+#' calcConcordance(logitModel)
+calcConcordance <- function (logitMod){
   fitted <- data.frame (cbind (logitMod$y, logitMod$fitted.values)) # actuals and fitted
   colnames(fitted) <- c('response','score') # rename columns
   ones <- fitted[fitted$response==1, ] # Subset ones
@@ -50,7 +50,7 @@ CalcConcordance <- function (logitMod){
 #' @description Calculate the Somers D statistic for a given logit model
 #' @details For a given logit model, Somer's D is calculated as the number of concordant pairs less number of discordant pairs divided by total number of pairs.
 #' @author Selva Prabhakaran
-#' @export SomersD
+#' @export somersD
 #' @param logitMod A logit model
 #' @return The Somers D statistic, which tells how many more concordant than discordant pairs exist divided by total number of pairs.
 #' @examples
@@ -60,8 +60,8 @@ CalcConcordance <- function (logitMod){
 #' rank   <- c (3, 3, 1, 4, 4, 2, 4, 4, 4, 3, 3, 3, 2, 2, 1)
 #' inputData  <- data.frame (accept, acad , sports, rank) # assemble the data frame
 #' logitModel <- glm(accept ~ ., family="binomial", data = inputData )
-#' SomersD(logitMod=logitModel)
-SomersD <- function(logitMod){
+#' somersD(logitMod=logitModel)
+somersD <- function(logitMod){
   conc_disc <- CalcConcordance(logitMod)
   return (conc_disc$Concordance - conc_disc$Discordance)
 }
@@ -72,9 +72,9 @@ SomersD <- function(logitMod){
 #' @description Calculate the percentage misclassification error for this logit model's fitted values.
 #' @details For a given logit model, misclassfication error is the number of mismatches between the predicted and actuals direction of the binary y variable.
 #' @author Selva Prabhakaran
-#' @export SomersD
+#' @export misClassError
 #' @param logitMod A logit model
-#' @param threshold If predicted value is above the threshold, it will be considered as an event (1), else it will be a non-event (0).
+#' @param threshold If predicted value is above the threshold, it will be considered as an event (1), else it will be a non-event (0). Defaults to 0.5.
 #' @return The misclassification error, which tells what proportion of predicted direction did not match with the actuals.
 #' @examples
 #' accept <- c (1, 0, 1, 0, 1, 1, 0, 0, 0,1, 0, 1, 0, 0, 1)
@@ -87,13 +87,83 @@ SomersD <- function(logitMod){
 misClassError <- function(logitMod, threshold=0.5){
   predicted_dir <- ifelse(logitMod$fitted.values < threshold, 0, 1)
   actual_dir <- logitMod$y
-  sum(predicted_dir != actual_dir)/length(actual_dir)
+  return(sum(predicted_dir != actual_dir)/length(actual_dir))
 }
 
 
 # Sensitivity
+#' @title sensitivity
+#' @description Calculate the sensitivity for a given logit model.
+#' @details For a given logit model, sensitivity is defined as number of observations with the event AND predicted to have the event divided by the number of observations with the event. It can be used as an indicator to gauge how sensitive is your model in detecting the occurence of events, especially when you are not so concerned about predicting the non-events as true.
+#' @author Selva Prabhakaran
+#' @export sensitivity
+#' @param logitMod A logit model
+#' @param threshold If predicted value is above the threshold, it will be considered as an event (1), else it will be a non-event (0). Defaults to 0.5.
+#' @return The sensitivity of the logit model, which is, the number of observations with the event AND predicted to have the event divided by the nummber of observations with the event.
+#' @examples
+#' accept <- c (1, 0, 1, 0, 1, 1, 0, 0, 0,1, 0, 1, 0, 0, 1)
+#' acad   <- c (66, 60, 80, 60, 52, 60, 47, 90, 75, 35, 46, 75, 66, 54, 76)
+#' sports <- c (2.6,4.6,4.5, 3.3, 3.13, 4, 1.9, 3.5, 1.2, 1.8, 1, 5.1, 3.3, 5.2, 4.9)
+#' rank   <- c (3, 3, 1, 4, 4, 2, 4, 4, 4, 3, 3, 3, 2, 2, 1)
+#' inputData  <- data.frame (accept, acad , sports, rank) # assemble the data frame
+#' logitModel <- glm(accept ~ ., family="binomial", data = inputData )
+#' sensitivity(logitMod=logitModel)
+sensitivity <- function(logitMod, threshold=0.5){
+  predicted_dir <- ifelse(logitMod$fitted.values < threshold, 0, 1)
+  actual_dir <- logitMod$y
+  no_with_and_predicted_to_have_event <- sum(actual_dir == 1 & predicted_dir == 1)
+  no_with_event <- sum(actual_dir == 1)
+  return(no_with_and_predicted_to_have_event/no_with_event)
+}
 
 # Specificity
+#' @title specficity
+#' @description Calculate the specificity for a given logit model.
+#' @details For a given logit model, specificity is defined as number of observations without the event AND predicted to not have the event divided by the number of observations without the event. Specificity is particularly useful when you are extra careful not to predict a non event as an event, like in spam detection where you dont want to classify a genuine mail as spam(event) where it may be somewhat ok to occasionally classify a spam as a genuine mail(a non-event).
+#' @author Selva Prabhakaran
+#' @export specificity
+#' @param logitMod A logit model
+#' @param threshold If predicted value is above the threshold, it will be considered as an event (1), else it will be a non-event (0). Defaults to 0.5.
+#' @return The specificity of the logit model, which is, the number of observations without the event AND predicted to not have the event divided by the nummber of observations without the event.
+#' @examples
+#' accept <- c (1, 0, 1, 0, 1, 1, 0, 0, 0,1, 0, 1, 0, 0, 1)
+#' acad   <- c (66, 60, 80, 60, 52, 60, 47, 90, 75, 35, 46, 75, 66, 54, 76)
+#' sports <- c (2.6,4.6,4.5, 3.3, 3.13, 4, 1.9, 3.5, 1.2, 1.8, 1, 5.1, 3.3, 5.2, 4.9)
+#' rank   <- c (3, 3, 1, 4, 4, 2, 4, 4, 4, 3, 3, 3, 2, 2, 1)
+#' inputData  <- data.frame (accept, acad , sports, rank) # assemble the data frame
+#' logitModel <- glm(accept ~ ., family="binomial", data = inputData )
+#' specificity(logitMod=logitModel)
+specificity <- function(logitMod, threshold=0.5){
+  predicted_dir <- ifelse(logitMod$fitted.values < threshold, 0, 1)
+  actual_dir <- logitMod$y
+  no_without_and_predicted_to_not_have_event <- sum(actual_dir != 1 & predicted_dir != 1)
+  no_without_event <- sum(actual_dir != 1)
+  return(no_without_and_predicted_to_not_have_event/no_without_event)
+}
+
+# youdensIndex
+#' @title youdensIndex
+#' @description Calculate the specificity for a given logit model.
+#' @details For a given logit model, Youden's index is calculated as sensitivity + specificity - 1
+#' @author Selva Prabhakaran
+#' @export youdensIndex
+#' @param logitMod A logit model
+#' @param threshold If predicted value is above the threshold, it will be considered as an event (1), else it will be a non-event (0). Defaults to 0.5.
+#' @return The youdensIndex of the logit model, which is calculated as Sensitivity + Specificity - 1
+#' @examples
+#' accept <- c (1, 0, 1, 0, 1, 1, 0, 0, 0,1, 0, 1, 0, 0, 1)
+#' acad   <- c (66, 60, 80, 60, 52, 60, 47, 90, 75, 35, 46, 75, 66, 54, 76)
+#' sports <- c (2.6,4.6,4.5, 3.3, 3.13, 4, 1.9, 3.5, 1.2, 1.8, 1, 5.1, 3.3, 5.2, 4.9)
+#' rank   <- c (3, 3, 1, 4, 4, 2, 4, 4, 4, 3, 3, 3, 2, 2, 1)
+#' inputData  <- data.frame (accept, acad , sports, rank) # assemble the data frame
+#' logitModel <- glm(accept ~ ., family="binomial", data = inputData )
+#' youdensIndex(logitMod=logitModel)
+youdensIndex <- function(logitMod, threshold=0.5){
+  Sensitivity <- sensitivity(logitMod, threshold = threshold)
+  Specificity <- specificity(logitMod, threshold = threshold)
+  return(Sensitivity + Specificity - 1)
+}
+
 
 # AreaROC
 

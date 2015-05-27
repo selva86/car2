@@ -2,7 +2,6 @@
 % Please edit documentation in R/hello.R
 \name{SomersD}
 \alias{SomersD}
-\alias{SomersDistance}
 \title{SomersD}
 \usage{
 SomersD(logitMod)
