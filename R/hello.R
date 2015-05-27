@@ -16,7 +16,6 @@
 #' @title CalcConcordance
 #' @description Calculate concordance and discordance percentages for a logit model
 #' @details Calculate the percentage of concordant and discordant pairs for a given logit model.
-#' @aliases CalcConcordance, CalcDiscordance, CalcConcordanceDiscordance
 #' @author Selva Prabhakaran
 #' @export CalcConcordance
 #' @param logitMod A logit model
@@ -46,10 +45,10 @@ CalcConcordance <- function (logitMod){
               "Tied"=tiesPercent, "Pairs"=totalPairs))
 }
 
+
 #' @title SomersD
 #' @description Calculate the Somers D statistic for a given logit model
 #' @details For a given logit model, Somer's D is calculated as the number of concordant pairs less number of discordant pairs divided by total number of pairs.
-#' @aliases SomersDistance
 #' @author Selva Prabhakaran
 #' @export SomersD
 #' @param logitMod A logit model
@@ -66,3 +65,40 @@ SomersD <- function(logitMod){
   conc_disc <- CalcConcordance(logitMod)
   return (conc_disc$Concordance - conc_disc$Discordance)
 }
+
+
+# Misclassification Error
+#' @title misClassError
+#' @description Calculate the percentage misclassification error for this logit model's fitted values.
+#' @details For a given logit model, misclassfication error is the number of mismatches between the predicted and actuals direction of the binary y variable.
+#' @author Selva Prabhakaran
+#' @export SomersD
+#' @param logitMod A logit model
+#' @param threshold If predicted value is above the threshold, it will be considered as an event (1), else it will be a non-event (0).
+#' @return The misclassification error, which tells what proportion of predicted direction did not match with the actuals.
+#' @examples
+#' accept <- c (1, 0, 1, 0, 1, 1, 0, 0, 0,1, 0, 1, 0, 0, 1)
+#' acad   <- c (66, 60, 80, 60, 52, 60, 47, 90, 75, 35, 46, 75, 66, 54, 76)
+#' sports <- c (2.6,4.6,4.5, 3.3, 3.13, 4, 1.9, 3.5, 1.2, 1.8, 1, 5.1, 3.3, 5.2, 4.9)
+#' rank   <- c (3, 3, 1, 4, 4, 2, 4, 4, 4, 3, 3, 3, 2, 2, 1)
+#' inputData  <- data.frame (accept, acad , sports, rank) # assemble the data frame
+#' logitModel <- glm(accept ~ ., family="binomial", data = inputData )
+#' misClassError(logitMod=logitModel)
+misClassError <- function(logitMod, threshold=0.5){
+  predicted_dir <- ifelse(logitMod$fitted.values < threshold, 0, 1)
+  actual_dir <- logitMod$y
+  sum(predicted_dir != actual_dir)/length(actual_dir)
+}
+
+
+# Sensitivity
+
+# Specificity
+
+# AreaROC
+
+# PlotROC
+
+# kappa
+
+
