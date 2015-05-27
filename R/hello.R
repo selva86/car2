@@ -117,7 +117,7 @@ sensitivity <- function(logitMod, threshold=0.5){
 }
 
 # Specificity
-#' @title specficity
+#' @title specificity
 #' @description Calculate the specificity for a given logit model.
 #' @details For a given logit model, specificity is defined as number of observations without the event AND predicted to not have the event divided by the number of observations without the event. Specificity is particularly useful when you are extra careful not to predict a non event as an event, like in spam detection where you dont want to classify a genuine mail as spam(event) where it may be somewhat ok to occasionally classify a spam as a genuine mail(a non-event).
 #' @author Selva Prabhakaran
@@ -164,11 +164,60 @@ youdensIndex <- function(logitMod, threshold=0.5){
   return(Sensitivity + Specificity - 1)
 }
 
-
-# kappaCohen
-
 # AreaROC
 
 # PlotROC
+
+
+# iv
+
+# woe
+
+# confusionMatrix
+#' @title confusionMatrix
+#' @description Calculate the confusion matrix for the fitted values for a logistic regression model.
+#' @details For a given logit model, the confusion matrix showing the count of predicted events and non-events against actual events and non events.
+#' @author Selva Prabhakaran
+#' @export confusionMatrix
+#' @param logitMod A logit model
+#' @param threshold If predicted value is above the threshold, it will be considered as an event (1), else it will be a non-event (0). Defaults to 0.5.
+#' @return For a given logit model, returns the confusion matrix showing the count of predicted events and non-events against actual events and non events.
+#' @examples
+#' accept <- c (1, 0, 1, 0, 1, 1, 0, 0, 0,1, 0, 1, 0, 0, 1)
+#' acad   <- c (66, 60, 80, 60, 52, 60, 47, 90, 75, 35, 46, 75, 66, 54, 76)
+#' sports <- c (2.6,4.6,4.5, 3.3, 3.13, 4, 1.9, 3.5, 1.2, 1.8, 1, 5.1, 3.3, 5.2, 4.9)
+#' rank   <- c (3, 3, 1, 4, 4, 2, 4, 4, 4, 3, 3, 3, 2, 2, 1)
+#' inputData  <- data.frame (accept, acad , sports, rank) # assemble the data frame
+#' logitModel <- glm(accept ~ ., family="binomial", data = inputData )
+#' confusionMatrix(logitMod=logitModel)
+confusionMatrix <- function(logitMod, threshold=0.5){
+  predicted_dir <- ifelse(logitMod$fitted.values < threshold, 0, 1)
+  actual_dir <- logitMod$y
+  return (as.data.frame.matrix(table(predicted_dir, actual_dir)))
+}
+
+# kappaCohen
+#' @title kappaCohen
+#' @description Calculate the Cohen's kappa statistic for a given logit model.
+#' @details For a given logit model, Cohen's kappa is calculated. Cohen's kappa is calculated as (probabiliity of agreement - probability of expected) / (1-(probability of expected)))
+#' @author Selva Prabhakaran
+#' @export kappaCohen
+#' @param logitMod A logit model
+#' @param threshold If predicted value is above the threshold, it will be considered as an event (1), else it will be a non-event (0). Defaults to 0.5.
+#' @return The Cohen's kappa of the logit model
+#' @examples
+#' accept <- c (1, 0, 1, 0, 1, 1, 0, 0, 0,1, 0, 1, 0, 0, 1)
+#' acad   <- c (66, 60, 80, 60, 52, 60, 47, 90, 75, 35, 46, 75, 66, 54, 76)
+#' sports <- c (2.6,4.6,4.5, 3.3, 3.13, 4, 1.9, 3.5, 1.2, 1.8, 1, 5.1, 3.3, 5.2, 4.9)
+#' rank   <- c (3, 3, 1, 4, 4, 2, 4, 4, 4, 3, 3, 3, 2, 2, 1)
+#' inputData  <- data.frame (accept, acad , sports, rank) # assemble the data frame
+#' logitModel <- glm(accept ~ ., family="binomial", data = inputData )
+#' kappaCohen(logitMod=logitModel)
+kappaCohen <- function(logitMod, threshold=0.5){
+  conf <- confusionMatrix(logitMod)
+  prob_agreement <- conf[1, 1] + conf[2, 2]
+  prob_expected <- sum(conf[2, ])/sum(conf) * sum(conf[, 2])/sum(conf)   # probability of actual 'yes' * probability of predicting 'yes'.
+  return((prob_agreement - prob_expected)/(1-(prob_expected)))
+}
 
 

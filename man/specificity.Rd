@@ -2,7 +2,7 @@
 % Please edit documentation in R/hello.R
 \name{specificity}
 \alias{specificity}
-\title{specficity}
+\title{specificity}
 \usage{
 specificity(logitMod, threshold = 0.5)
 }

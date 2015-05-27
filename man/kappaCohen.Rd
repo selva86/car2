@@ -12,13 +12,13 @@ kappaCohen(logitMod, threshold = 0.5)
 \item{threshold}{If predicted value is above the threshold, it will be considered as an event (1), else it will be a non-event (0). Defaults to 0.5.}
 }
 \value{
-The youdensIndex of the logit model, which is calculated as Sensitivity + Specificity - 1
+The Cohen's kappa of the logit model
 }
 \description{
 Calculate the Cohen's kappa statistic for a given logit model.
 }
 \details{
-For a given logit model, Youden's index is calculated as sensitivity + specificity - 1
+For a given logit model, Cohen's kappa is calculated. Cohen's kappa is calculated as (probabiliity of agreement - probability of expected) / (1-(probability of expected)))
 }
 \examples{
 accept <- c (1, 0, 1, 0, 1, 1, 0, 0, 0,1, 0, 1, 0, 0, 1)
