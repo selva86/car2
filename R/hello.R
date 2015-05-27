@@ -13,7 +13,7 @@
 #   Check Package:             'Ctrl + Shift + E'
 #   Test Package:              'Ctrl + Shift + T'
 
-#' @title CalcConcordance
+#' @title calcConcordance
 #' @description Calculate concordance and discordance percentages for a logit model
 #' @details Calculate the percentage of concordant and discordant pairs for a given logit model.
 #' @author Selva Prabhakaran
@@ -46,7 +46,7 @@ calcConcordance <- function (logitMod){
 }
 
 
-#' @title SomersD
+#' @title somersD
 #' @description Calculate the Somers D statistic for a given logit model
 #' @details For a given logit model, Somer's D is calculated as the number of concordant pairs less number of discordant pairs divided by total number of pairs.
 #' @author Selva Prabhakaran
@@ -165,10 +165,10 @@ youdensIndex <- function(logitMod, threshold=0.5){
 }
 
 
+# kappaCohen
+
 # AreaROC
 
 # PlotROC
-
-# kappa
 
 
