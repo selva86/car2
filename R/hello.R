@@ -164,10 +164,17 @@ youdensIndex <- function(logitMod, threshold=0.5){
   return(Sensitivity + Specificity - 1)
 }
 
+<<<<<<< HEAD
+=======
+
+# kappaCohen
+
+>>>>>>> e606516ab4e25d2fd9b4850f9f4a9191807a1d54
 # AreaROC
 
 # PlotROC
 
+<<<<<<< HEAD
 
 # iv
 
@@ -220,4 +227,6 @@ kappaCohen <- function(logitMod, threshold=0.5){
   return((prob_agreement - prob_expected)/(1-(prob_expected)))
 }
 
+=======
+>>>>>>> e606516ab4e25d2fd9b4850f9f4a9191807a1d54
 
