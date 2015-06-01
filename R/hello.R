@@ -164,17 +164,13 @@ youdensIndex <- function(logitMod, threshold=0.5){
   return(Sensitivity + Specificity - 1)
 }
 
-<<<<<<< HEAD
 =======
 
 # kappaCohen
 
->>>>>>> e606516ab4e25d2fd9b4850f9f4a9191807a1d54
 # AreaROC
 
 # PlotROC
-
-<<<<<<< HEAD
 
 # iv
 
@@ -227,6 +223,30 @@ kappaCohen <- function(logitMod, threshold=0.5){
   return((prob_agreement - prob_expected)/(1-(prob_expected)))
 }
 
-=======
->>>>>>> e606516ab4e25d2fd9b4850f9f4a9191807a1d54
+# Create sample dataset for drawing ROC
+df <- as.data.frame(matrix(c(c(1:100), cumsum(round(runif(100, 1, 3)))), ncol=2))
+bp <- ggplot(df, aes(V1, V2))
+bp + geom_area(fill="steelblue") + labs(title="ROC", x="1-Specificity", y="Sensitivity")
 
+# Compute auROC
+auROC <- 0
+for(point in c(2:nrow(df))) {
+  x1 <- df[point-1, 1]
+  x2 <- df[point, 1]
+  y1 <- df[point-1, 2]
+  y2 <- df[point, 2]
+  # cat("x1, x2, y1, y2:", x1, x2, y1, y2)
+
+  # compute rect_area
+  rect_x <- x2 - x1
+  rect_y <- y1
+  rect_area <- rect_x * rect_y
+  # cat("rect_x, rect_y, rect_area:", rect_x, rect_y, rect_area)
+
+  # compute area of head triangle
+  triangle_area <- rect_x * (y2-y1) * 0.5
+  currArea <- rect_area + triangle_area
+  auROC <- auROC + currArea
+}
+
+aROC <- auROC/(max(df[, 1]) * max(df[, 2]))
