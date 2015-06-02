@@ -11,4 +11,6 @@ LazyData: TRUE
 LazyLoad: yes
 Depends:
     car
+Import:
+    ggplot2
 

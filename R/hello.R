@@ -228,41 +228,104 @@ getSpecSens<- function(logitmod, threshold=threshold){
               sensitivity(logitMod = logitMod, threshold=threshold)))
 }
 
-# Create sample dataset for drawing ROC
-df <- as.data.frame(matrix(c(c(1:100), cumsum(round(runif(100, 1, 3)))), ncol=2))
+
+# plotROC
+#' @title plotROC
+#' @description Plot the Receiver Operating Characteristics(ROC) Curve based on ggplot2
+#' @details For a given logit model, A ROC curve is plotted using the ggplot2 framework along the the area under the curve.
+#' @author Selva Prabhakaran
+#' @export plotROC
+#' @param logitMod A logit model
+#' @return Plots the ROC curve
+#' @import ggplot2
+#' @examples
+#' accept <- c (1, 0, 1, 0, 1, 1, 0, 0, 0,1, 0, 1, 0, 0, 1)
+#' acad   <- c (66, 60, 80, 60, 52, 60, 47, 90, 75, 35, 46, 75, 66, 54, 76)
+#' sports <- c (2.6,4.6,4.5, 3.3, 3.13, 4, 1.9, 3.5, 1.2, 1.8, 1, 5.1, 3.3, 5.2, 4.9)
+#' rank   <- c (3, 3, 1, 4, 4, 2, 4, 4, 4, 3, 3, 3, 2, 2, 1)
+#' inputData  <- data.frame (accept, acad , sports, rank) # assemble the data frame
+#' logitModel <- glm(accept ~ ., family="binomial", data = inputData )
+#' plotROC(logitMod=logitModel)
 plotROC <- function(logitMod){
   # create the x and y axis values in a df
-  df <- as.data.frame(matrix(numeric(50*2), ncol=2))# initialise
-  names(df) <- c("One_minus_specificity", "sensitivity")
+  df <- as.data.frame(matrix(numeric(51*2), ncol=2))# initialise
+  names(df) <- c("One_minus_specificity", "sensitivity")  # give col names.
   rowcount = 1
-  for (threshold in seq(0, 1, 0.02)){
+  for (threshold in seq(1, 0, by=-0.02)){
+    df[rowcount, ] <- getSpecSens(logitmod=logitMod, threshold=threshold)
     rowcount <- rowcount + 1
-    df[rowcount, ]<- getSpecSens(logitmod=logitMod, threshold=threshold)
   }
 
-  bp <- ggplot(df, aes(One_minus_specificity, sensitivity))
-  bp + geom_area(fill="steelblue") + labs(title="ROC", x="1-Specificity", y="Sensitivity")
+  AREAROC <- aROC(logitMod)  # compute area under ROC
+
+  df <- data.frame(df, Threshold=seq(1, 0, by=-0.02))  # append threshold
+
+  df$Threshold.show <- rep(NA, nrow(df))
+  # Adding Thresholds to show.
+  for (rownum in c(2:nrow(df))){
+    if(df[rownum, 1] != df[rownum-1, 1]  |  df[rownum, 2] != df[rownum-1, 2]){
+      df$Threshold.show[rownum] <-  df$Threshold[rownum]
+    }
+  }
+
+  # Plot it
+  bp <- ggplot(df, aes(One_minus_specificity, sensitivity, label=Threshold.show))
+  bp + geom_ribbon(color="#3399FF", fill="#3399FF", aes(ymin=0, ymax=sensitivity)) +
+    labs(title="ROC", x="1-Specificity", y="Sensitivity") +
+    annotate("text", label=paste("Area Under ROC:", round(AREAROC, 2)), x=0.75, y=0.35, colour="white") +
+    geom_text(aes(size=0.5))
 }
+
 
 # Compute auROC
-auROC <- 0
-for(point in c(2:nrow(df))) {
-  x1 <- df[point-1, 1]
-  x2 <- df[point, 1]
-  y1 <- df[point-1, 2]
-  y2 <- df[point, 2]
-  # cat("x1, x2, y1, y2:", x1, x2, y1, y2)
+# aROC
+#' @title aROC
+#' @description Calculate the area uder ROC curve statistic for a given logit model.
+#' @details For a given logit model, the area under the ROC curve shows how well the model performs at capturing the false events and false non-events. An best case model will have an area of 1. However that would be unrealistic, so the closer the aROC to 1, the better is the model.
+#' @author Selva Prabhakaran
+#' @export aROC
+#' @param logitMod A logit model
+#' @return The area under the ROC curve for a given logit model.
+#' @examples
+#' accept <- c (1, 0, 1, 0, 1, 1, 0, 0, 0,1, 0, 1, 0, 0, 1)
+#' acad   <- c (66, 60, 80, 60, 52, 60, 47, 90, 75, 35, 46, 75, 66, 54, 76)
+#' sports <- c (2.6,4.6,4.5, 3.3, 3.13, 4, 1.9, 3.5, 1.2, 1.8, 1, 5.1, 3.3, 5.2, 4.9)
+#' rank   <- c (3, 3, 1, 4, 4, 2, 4, 4, 4, 3, 3, 3, 2, 2, 1)
+#' inputData  <- data.frame (accept, acad , sports, rank) # assemble the data frame
+#' logitModel <- glm(accept ~ ., family="binomial", data = inputData )
+#' aROC(logitMod=logitModel)
+aROC <- function(logitMod){
+  # create the x and y axis values in a df
+  df <- as.data.frame(matrix(numeric(51*2), ncol=2))# initialise
+  names(df) <- c("One_minus_specificity", "sensitivity")  # give col names.
+  rowcount = 1
+  for (threshold in seq(1, 0, by=-0.02)){
+    df[rowcount, ] <- getSpecSens(logitmod=logitMod, threshold=threshold)
+    rowcount <- rowcount + 1
+  }
 
-  # compute rect_area
-  rect_x <- x2 - x1
-  rect_y <- y1
-  rect_area <- rect_x * rect_y
-  # cat("rect_x, rect_y, rect_area:", rect_x, rect_y, rect_area)
+  df <- data.frame(df, Threshold=seq(1, 0, by=-0.02))  # append threshold
 
-  # compute area of head triangle
-  triangle_area <- rect_x * (y2-y1) * 0.5
-  currArea <- rect_area + triangle_area
-  auROC <- auROC + currArea
+  # Compute aROC.
+  auROC <- 0  # initialise
+  for(point in c(2:nrow(df))) {
+    x1 <- df[point-1, 1]
+    x2 <- df[point, 1]
+    y1 <- df[point-1, 2]
+    y2 <- df[point, 2]
+    # cat("x1, x2, y1, y2:", x1, x2, y1, y2)
+
+    # compute rect_area
+    rect_x <- x2 - x1
+    rect_y <- y1
+    rect_area <- rect_x * rect_y
+    # cat("rect_x, rect_y, rect_area:", rect_x, rect_y, rect_area)
+
+    # compute area of head triangle
+    triangle_area <- rect_x * (y2-y1) * 0.5
+    currArea <- rect_area + triangle_area
+    auROC <- auROC + currArea
+  }
+  totalArea <- (max(df[, 1]) * max(df[, 2]))
+  return(auROC/totalArea)  # auROC/totalArea
 }
-
-aROC <- auROC/(max(df[, 1]) * max(df[, 2]))
