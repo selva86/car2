@@ -164,7 +164,6 @@ youdensIndex <- function(logitMod, threshold=0.5){
   return(Sensitivity + Specificity - 1)
 }
 
-=======
 
 # kappaCohen
 
@@ -223,10 +222,27 @@ kappaCohen <- function(logitMod, threshold=0.5){
   return((prob_agreement - prob_expected)/(1-(prob_expected)))
 }
 
+# Compute specificity and sensitivity
+getSpecSens<- function(logitmod, threshold=threshold){
+  return(list(1-specificity(logitMod = logitmod, threshold=threshold),
+              sensitivity(logitMod = logitMod, threshold=threshold)))
+}
+
 # Create sample dataset for drawing ROC
 df <- as.data.frame(matrix(c(c(1:100), cumsum(round(runif(100, 1, 3)))), ncol=2))
-bp <- ggplot(df, aes(V1, V2))
-bp + geom_area(fill="steelblue") + labs(title="ROC", x="1-Specificity", y="Sensitivity")
+plotROC <- function(logitMod){
+  # create the x and y axis values in a df
+  df <- as.data.frame(matrix(numeric(50*2), ncol=2))# initialise
+  names(df) <- c("One_minus_specificity", "sensitivity")
+  rowcount = 1
+  for (threshold in seq(0, 1, 0.02)){
+    rowcount <- rowcount + 1
+    df[rowcount, ]<- getSpecSens(logitmod=logitMod, threshold=threshold)
+  }
+
+  bp <- ggplot(df, aes(One_minus_specificity, sensitivity))
+  bp + geom_area(fill="steelblue") + labs(title="ROC", x="1-Specificity", y="Sensitivity")
+}
 
 # Compute auROC
 auROC <- 0
