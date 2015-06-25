@@ -1,8 +1,3 @@
-# Hello, world!
-#
-# This is an example function named 'hello'
-# which prints 'Hello, world!'.
-#
 # You can learn more about package authoring with RStudio at:
 #
 #   http://r-pkgs.had.co.nz/
@@ -165,16 +160,6 @@ youdensIndex <- function(logitMod, threshold=0.5){
 }
 
 
-# kappaCohen
-
-# AreaROC
-
-# PlotROC
-
-# iv
-
-# woe
-
 # confusionMatrix
 #' @title confusionMatrix
 #' @description Calculate the confusion matrix for the fitted values for a logistic regression model.
@@ -329,3 +314,9 @@ aROC <- function(logitMod){
   totalArea <- (max(df[, 1]) * max(df[, 2]))
   return(auROC/totalArea)  # auROC/totalArea
 }
+
+
+# iv
+
+# woe
+
