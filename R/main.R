@@ -315,7 +315,7 @@ aROC <- function(logitMod){
   return(auROC/totalArea)  # auROC/totalArea
 }
 
-# Compute WOE
+
 library(ISLR)
 data("OJ")
 head(OJ)
@@ -323,6 +323,8 @@ X <- factor(as.character(OJ$STORE))  # prepares X
 Y <- as.character(OJ$Purchase)
 valueOfGood <- "CH"  # input argument
 
+
+# Compute WOE Table
 getWOETable <- function(X=X, Y=Y, valueOfGood=1){
   yClasses <- unique(Y)
   if(length(yClasses) == 2) {  # ensure it is binary
@@ -356,7 +358,26 @@ getWOETable <- function(X=X, Y=Y, valueOfGood=1){
 
 getWOETable(X, Y, valueOfGood = "CH")
 
-# iv
+# Compute WOE
+getWOE <- function(X=X, Y=Y, valueOfGood=1){
+  woeTable <- getWOETable(X=X, Y=Y, valueOfGood = valueOfGood)
+  return(woeTable[match(X, woeTable[, 1]), "WOE"])  # lookup corresponding value of WOE for each X in woeTable
+}
 
+# Compute IV
+getIV <- function(X=X, Y=Y, valueOfGood=1){
+  woeTable <- getWOETable(X=X, Y=Y, valueOfGood = valueOfGood)
+  iv <- sum(woeTable[, "IV"])
+
+  # describe predictive power.
+  if(iv < 0.03) {
+    attr(iv, "howgood") <- "Not Predictive"
+  } else if(iv < 0.1) {
+    attr(iv, "howgood") <- "Somewhat Predictive"
+  } else {
+    attr(iv, "howgood") <- "Highly Predictive"
+  }
+  return(iv)  # lookup corresponding value of WOE for each X in woeTable
+}
 
 
