@@ -315,8 +315,48 @@ aROC <- function(logitMod){
   return(auROC/totalArea)  # auROC/totalArea
 }
 
+# Compute WOE
+library(ISLR)
+data("OJ")
+head(OJ)
+X <- factor(as.character(OJ$STORE))  # prepares X
+Y <- as.character(OJ$Purchase)
+valueOfGood <- "CH"  # input argument
+
+getWOETable <- function(X=X, Y=Y, valueOfGood=1){
+  yClasses <- unique(Y)
+  if(length(yClasses) == 2) {  # ensure it is binary
+    # covert good's to 1 and bad's to 0.
+    Y[which(Y==valueOfGood)] <- 1
+    Y[which(!(Y=="1"))] <- 0
+    Y <- as.numeric(Y)
+    df <- data.frame(X, Y)
+
+    # Create WOE table
+    woeTable <- as.data.frame(matrix(numeric(nlevels(X) * 8), nrow=nlevels(X), ncol=8))
+    names(woeTable) <- c("CAT", "GOODS", "BADS", "TOTAL", "PCT_G", "PCT_B", "WOE", "IV")
+    woeTable$CAT <- levels(X)  # load categories to table.
+
+    # Load the number of goods and bads within each category.
+    for(catg in levels(X)){  # catg => current category
+      woeTable[woeTable$CAT == catg, c(3, 2)] <- table(Y[X==catg])  # assign the good and bad count for current category.
+      woeTable[woeTable$CAT == catg, "TOTAL"] <- sum(X==catg)
+    }
+
+    woeTable$PCT_G <- woeTable$GOODS/sum(woeTable$GOODS)  # compute % good
+    woeTable$PCT_B <- woeTable$BADS /sum(woeTable$BADS)  # compute % bad
+    woeTable$WOE <- log(woeTable$PCT_G / woeTable$PCT_B)  # compute WOE
+    woeTable$IV <- (woeTable$PCT_G - woeTable$PCT_B) * woeTable$WOE  # compute IV
+    attr(woeTable, "iValue") <- sum(woeTable$IV)  # assign iv as attribute..
+    return(woeTable)
+  } else {
+    cat("WOE can't be computed because the Y is not binary.")
+  }
+}
+
+getWOETable(X, Y, valueOfGood = "CH")
 
 # iv
 
-# woe
+
 
