@@ -5,12 +5,12 @@ Version: 0.1
 Date: 2015-05-26
 Author: Selva Prabhakaran
 Maintainer: Selva Prabhakaran <selva86@gmail.com>
-Description: More about what it does (maybe more than one line)
+Description: Provides companion function for analysing the performance of classification models, based on the problems specific objectives. There is a function to plot the ROC curve on the beautiful ggplot2 graphics framework, computing AUROC, concordance, discordance, specificity, sensitivity, Youden's index, Somers D statistic etc.
 License: GPL (>= 2)
 LazyData: TRUE
 LazyLoad: yes
 Depends:
-    car
+    ggplot2
 Import:
     ggplot2
 
