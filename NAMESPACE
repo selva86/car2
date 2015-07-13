@@ -2,6 +2,9 @@
 
 export(AUROC)
 export(Concordance)
+export(IV)
+export(WOE)
+export(WOETable)
 export(confusionMatrix)
 export(kappaCohen)
 export(misClassError)

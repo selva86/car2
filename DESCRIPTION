@@ -1,6 +1,6 @@
 Package: car2
 Type: Package
-Title: Performance analysis and Companion functions for binary classification models (logistic, discriminant etc).
+Title: Performance analysis and Companion functions for binary classification models (logistic, discriminant etc)
 Version: 0.1
 Date: 2015-05-26
 Author: Selva Prabhakaran

@@ -357,11 +357,21 @@ NULL
 #' @title WOETable
 #' @description Compute the WOETable that shows the Weights Of Evidence (WOE) for each group and respeective Information Values (IVs).
 #' @details For a given actual for a Binary Y variable and a categorical X variable stored as factor, the WOE table is generated with calculated WOE's and IV's
-#' @author Selva Prabhakaran
+#' @author Selva Prabhakaran \email{selva86@@gmail.com}
 #' @export WOETable
 #' @param X The categorical variable stored as factor for which WOE Table is to be computed.
 #' @param Y The actual 1/0 flags for the binary response variable. It can take values of either 1 or 0, where 1 represents the 'Good' or 'Events' while 0 represents 'Bad' or 'Non-Events'.
 #' @param valueOfGood The value in Y that is used to represent 'Good' or the occurence of the event of interest. Defaults to 1.
+#' \itemize{
+#'   \item CAT. The groups (levels) of the categorical X variable for which WOE is to be calculated.
+#'   \item GOODS. The total number of "Goods" or "Events" in respective group.
+#'   \item BADS. The total number of "Bads" or "Non-Events" in respective group.
+#'   \item TOTAL. The total number of observations in respective group.
+#'   \item PCT_G. The Percentage of 'Goods' or 'Events' accounted for by respective group.
+#'   \item PCT_B. The Percentage of 'Bads' or 'Non-Events' accounted for by respective group.
+#'   \item WOE. The computed weights of evidence(WOE) for respective group. The WOE values can be used in place of the actual group itself, thereby producing a 'continuous' alternative.
+#'   \item IV. The information value contributed by each group in the X. The sum of IVs is the total information value of the categorical X variable.
+#' }
 #' @return The WOE table with the respective weights of evidence for each group and the IV's.
 #' @examples
 #' data('SimData')
@@ -398,78 +408,52 @@ WOETable <- function(X, Y, valueOfGood=1){
 }
 
 # Sample run:
-WOETable(X=SimData$X.Cat, Y=SimData$Y.Binary, valueOfGood=1)
+# WOETable(X=SimData$X.Cat, Y=SimData$Y.Binary, valueOfGood=1)
 
 
 
-# Compute WOE Table
-# getWOETable <- function(X=X, Y=Y, valueOfGood=1){
-#   yClasses <- unique(Y)
-#   if(length(yClasses) == 2) {  # ensure it is binary
-#     # covert good's to 1 and bad's to 0.
-#     Y[which(Y==valueOfGood)] <- 1
-#     Y[which(!(Y=="1"))] <- 0
-#     Y <- as.numeric(Y)
-#     df <- data.frame(X, Y)
-#
-#     # Create WOE table
-#     woeTable <- as.data.frame(matrix(numeric(nlevels(X) * 8), nrow=nlevels(X), ncol=8))
-#     names(woeTable) <- c("CAT", "GOODS", "BADS", "TOTAL", "PCT_G", "PCT_B", "WOE", "IV")
-#     woeTable$CAT <- levels(X)  # load categories to table.
-#
-#     # Load the number of goods and bads within each category.
-#     for(catg in levels(X)){  # catg => current category
-#       woeTable[woeTable$CAT == catg, c(3, 2)] <- table(Y[X==catg])  # assign the good and bad count for current category.
-#       woeTable[woeTable$CAT == catg, "TOTAL"] <- sum(X==catg)
-#     }
-#
-#     woeTable$PCT_G <- woeTable$GOODS/sum(woeTable$GOODS)  # compute % good
-#     woeTable$PCT_B <- woeTable$BADS /sum(woeTable$BADS)  # compute % bad
-#     woeTable$WOE <- log(woeTable$PCT_G / woeTable$PCT_B)  # compute WOE
-#     woeTable$IV <- (woeTable$PCT_G - woeTable$PCT_B) * woeTable$WOE  # compute IV
-#     attr(woeTable, "iValue") <- sum(woeTable$IV)  # assign iv as attribute..
-#     return(woeTable)
-#   } else {
-#     cat("WOE can't be computed because the Y is not binary.")
-#   }
-# }
-#
-# getWOETable(X, Y, valueOfGood = "CH")
+# Compute WOE
+#' @title WOE
+#' @description Compute the Weights Of Evidence (WOE) for each group of a given categorical X and binary response Y. The resulting WOE can be usued in place of the categorical X so as to be used as a continuous variable.
+#' @details For a given actual for a Binary Y variable and a categorical X variable stored as factor, the WOE's are computed.
+#' @author Selva Prabhakaran \email{selva86@@gmail.com}
+#' @export WOE
+#' @param X The categorical variable stored as factor for which Weights of Evidence(WOE) is to be computed.
+#' @param Y The actual 1/0 flags for the binary response variable. It can take values of either 1 or 0, where 1 represents the 'Good' or 'Events' while 0 represents 'Bad' or 'Non-Events'.
+#' @param valueOfGood The value in Y that is used to represent 'Good' or the occurence of the event of interest. Defaults to 1.
+#' @return The Weights Of Evidence (WOE) for each group in categorical X variable.
+#' @examples
+#' data('SimData')
+#' WOE(X=SimData$X.Cat, Y=SimData$Y.Binary)
+WOE <- function(X, Y, valueOfGood=1){
+  woeTable <- WOETable(X=X, Y=Y, valueOfGood = valueOfGood)
+  return(woeTable[match(X, woeTable[, 1]), "WOE"])  # lookup corresponding value of WOE for each X in woeTable
+}
 
+# Compute IV
+#' @title IV
+#' @description Compute the IV for each group of a given categorical X and binary response Y. The resulting WOE can be usued in place of the categorical X so as to be used as a continuous variable.
+#' @details For a given actual for a Binary Y variable and a categorical X variable stored as factor, the information values are computed.
+#' @author Selva Prabhakaran \email{selva86@@gmail.com}
+#' @export IV
+#' @param X The categorical variable stored as factor for which Information Value (IV) is to be computed.
+#' @param Y The actual 1/0 flags for the binary response variable. It can take values of either 1 or 0, where 1 represents the 'Good' or 'Events' while 0 represents 'Bad' or 'Non-Events'.
+#' @param valueOfGood The value in Y that is used to represent 'Good' or the occurence of the event of interest. Defaults to 1.
+#' @return The Information Value (IV) for each group in categorical X variable.
+#' @examples
+#' data('SimData')
+#' IV(X=SimData$X.Cat, Y=SimData$Y.Binary)
+IV <- function(X, Y, valueOfGood=1){
+  woeTable <- WOETable(X=X, Y=Y, valueOfGood=valueOfGood)
+  iv <- sum(woeTable[, "IV"])
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-# # Compute WOE
-# getWOE <- function(X=X, Y=Y, valueOfGood=1){
-#   woeTable <- getWOETable(X=X, Y=Y, valueOfGood = valueOfGood)
-#   return(woeTable[match(X, woeTable[, 1]), "WOE"])  # lookup corresponding value of WOE for each X in woeTable
-# }
-#
-# # Compute IV
-# getIV <- function(X=X, Y=Y, valueOfGood=1){
-#   woeTable <- getWOETable(X=X, Y=Y, valueOfGood = valueOfGood)
-#   iv <- sum(woeTable[, "IV"])
-#
-#   # describe predictive power.
-#   if(iv < 0.03) {
-#     attr(iv, "howgood") <- "Not Predictive"
-#   } else if(iv < 0.1) {
-#     attr(iv, "howgood") <- "Somewhat Predictive"
-#   } else {
-#     attr(iv, "howgood") <- "Highly Predictive"
-#   }
-#   return(iv)  # lookup corresponding value of WOE for each X in woeTable
-# }
-
-
+  # describe predictive power.
+  if(iv < 0.03) {
+    attr(iv, "howgood") <- "Not Predictive"
+  } else if(iv < 0.1) {
+    attr(iv, "howgood") <- "Somewhat Predictive"
+  } else {
+    attr(iv, "howgood") <- "Highly Predictive"
+  }
+  return(iv)  # lookup corresponding value of WOE for each X in woeTable
+}
