@@ -24,7 +24,8 @@ For a given binary response actuals and predicted probability scores, misclassfi
 }
 \examples{
 data('ActualsAndScores')
-misClassError(actuals=ActualsAndScores$Actuals, predictedScores=ActualsAndScores$PredictedScores, threshold=0.5)
+misClassError(actuals=ActualsAndScores$Actuals,
+  predictedScores=ActualsAndScores$PredictedScores, threshold=0.5)
 }
 \author{
 Selva Prabhakaran

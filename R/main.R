@@ -61,7 +61,8 @@ somersD <- function(actuals, predictedScores){
 #' @return The misclassification error, which tells what proportion of predicted direction did not match with the actuals.
 #' @examples
 #' data('ActualsAndScores')
-#' misClassError(actuals=ActualsAndScores$Actuals, predictedScores=ActualsAndScores$PredictedScores, threshold=0.5)
+#' misClassError(actuals=ActualsAndScores$Actuals,
+#'   predictedScores=ActualsAndScores$PredictedScores, threshold=0.5)
 misClassError <- function(actuals, predictedScores, threshold=0.5){
   predicted_dir <- ifelse(predictedScores < threshold, 0, 1)
   actual_dir <- actuals
@@ -315,7 +316,7 @@ plotROC <- function(actuals, predictedScores, threshold=0.5, Show.labels=F){
 # plotROC(actuals=ActualsAndScores$Actuals, predictedScores=ActualsAndScores$PredictedScores)
 
 
-# Documenting the dataset
+# Documenting ActualsAndScores the dataset
 #' ActualsAndScores
 #'
 #' A dataset containing the actuals for a simulated binary response variable as a numeric
@@ -333,59 +334,75 @@ plotROC <- function(actuals, predictedScores, threshold=0.5, Show.labels=F){
 #' @format A data frame with 170 rows and 2 variables
 NULL
 
+# Documenting SimData the dataset
+#' SimData
+#'
+#' A dataset containing the actuals for a simulated binary response variable (Y) as a numeric
+#'  and a categorical X variable with 9 groups, for which WOE calculation is performed.
+#'
+#' \itemize{
+#'   \item Y.Binary. A simulated variable meant to serve as the actual binary response variable. The good/events are marked as 1 while the bads/non-events are marked 0.
+#'   \item X.Cat. A categorical variable (factor) with 9 groups.
+#' }
+#'
+#' @docType data
+#' @keywords datasets
+#' @name SimData
+#' @usage data(SimData)
+#' @format A data frame with 30000 rows and 2 variables
+NULL
 
 
-
-
-
-
-
-
-# library(ISLR)
-# data("OJ")
-# head(OJ)
-# X <- factor(as.character(OJ$STORE))  # prepares X
-# Y <- as.character(OJ$Purchase)
-# valueOfGood <- "CH"  # input argument
-
-# actuals=ActualsAndScores$Actuals, predictedScores=ActualsAndScores$PredictedScores
 # Compute WOE Table
-# getWOETable <- function(X=X, Y=Y, valueOfGood=1){
-#   yClasses <- unique(Y)
-#   if(length(yClasses) == 2) {  # ensure it is binary
-#     # covert good's to 1 and bad's to 0.
-#     Y[which(Y==valueOfGood)] <- 1
-#     Y[which(!(Y=="1"))] <- 0
-#     Y <- as.numeric(Y)
-#     df <- data.frame(X, Y)
-#
-#     # Create WOE table
-#     woeTable <- as.data.frame(matrix(numeric(nlevels(X) * 8), nrow=nlevels(X), ncol=8))
-#     names(woeTable) <- c("CAT", "GOODS", "BADS", "TOTAL", "PCT_G", "PCT_B", "WOE", "IV")
-#     woeTable$CAT <- levels(X)  # load categories to table.
-#
-#     # Load the number of goods and bads within each category.
-#     for(catg in levels(X)){  # catg => current category
-#       woeTable[woeTable$CAT == catg, c(3, 2)] <- table(Y[X==catg])  # assign the good and bad count for current category.
-#       woeTable[woeTable$CAT == catg, "TOTAL"] <- sum(X==catg)
-#     }
-#
-#     woeTable$PCT_G <- woeTable$GOODS/sum(woeTable$GOODS)  # compute % good
-#     woeTable$PCT_B <- woeTable$BADS /sum(woeTable$BADS)  # compute % bad
-#     woeTable$WOE <- log(woeTable$PCT_G / woeTable$PCT_B)  # compute WOE
-#     woeTable$IV <- (woeTable$PCT_G - woeTable$PCT_B) * woeTable$WOE  # compute IV
-#     attr(woeTable, "iValue") <- sum(woeTable$IV)  # assign iv as attribute..
-#     return(woeTable)
-#   } else {
-#     cat("WOE can't be computed because the Y is not binary.")
-#   }
-# }
-#
-# getWOETable(X, Y, valueOfGood = "CH")
-#
-#
-#
-# # Compute WOE Table
+#' @title WOETable
+#' @description Compute the WOETable that shows the Weights Of Evidence (WOE) for each group and respeective Information Values (IVs).
+#' @details For a given actual for a Binary Y variable and a categorical X variable stored as factor, the WOE table is generated with calculated WOE's and IV's
+#' @author Selva Prabhakaran
+#' @export WOETable
+#' @param X The categorical variable stored as factor for which WOE Table is to be computed.
+#' @param Y The actual 1/0 flags for the binary response variable. It can take values of either 1 or 0, where 1 represents the 'Good' or 'Events' while 0 represents 'Bad' or 'Non-Events'.
+#' @param valueOfGood The value in Y that is used to represent 'Good' or the occurence of the event of interest. Defaults to 1.
+#' @return The WOE table with the respective weights of evidence for each group and the IV's.
+#' @examples
+#' data('SimData')
+#' WOETable(X=SimData$X.Cat, Y=SimData$Y.Binary)
+WOETable <- function(X, Y, valueOfGood=1){
+  yClasses <- unique(Y)
+  if(length(yClasses) == 2) {  # ensure it is binary
+    # covert good's to 1 and bad's to 0.
+    Y[which(Y==valueOfGood)] <- 1
+    Y[which(!(Y=="1"))] <- 0
+    Y <- as.numeric(Y)
+    df <- data.frame(X, Y)
+
+    # Create WOE table
+    woeTable <- as.data.frame(matrix(numeric(nlevels(X) * 8), nrow=nlevels(X), ncol=8))
+    names(woeTable) <- c("CAT", "GOODS", "BADS", "TOTAL", "PCT_G", "PCT_B", "WOE", "IV")
+    woeTable$CAT <- levels(X)  # load categories to table.
+
+    # Load the number of goods and bads within each category.
+    for(catg in levels(X)){  # catg => current category
+      woeTable[woeTable$CAT == catg, c(3, 2)] <- table(Y[X==catg])  # assign the good and bad count for current category.
+      woeTable[woeTable$CAT == catg, "TOTAL"] <- sum(X==catg)
+    }
+
+    woeTable$PCT_G <- woeTable$GOODS/sum(woeTable$GOODS)  # compute % good
+    woeTable$PCT_B <- woeTable$BADS /sum(woeTable$BADS)  # compute % bad
+    woeTable$WOE <- log(woeTable$PCT_G / woeTable$PCT_B)  # compute WOE
+    woeTable$IV <- (woeTable$PCT_G - woeTable$PCT_B) * woeTable$WOE  # compute IV
+    attr(woeTable, "iValue") <- sum(woeTable$IV)  # assign iv as attribute..
+    return(woeTable)
+  } else {
+    stop("WOE can't be computed because the Y is not binary.")
+  }
+}
+
+# Sample run:
+WOETable(X=SimData$X.Cat, Y=SimData$Y.Binary, valueOfGood=1)
+
+
+
+# Compute WOE Table
 # getWOETable <- function(X=X, Y=Y, valueOfGood=1){
 #   yClasses <- unique(Y)
 #   if(length(yClasses) == 2) {  # ensure it is binary
