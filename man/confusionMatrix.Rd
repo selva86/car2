@@ -27,6 +27,6 @@ data('ActualsAndScores')
 confusionMatrix(actuals=ActualsAndScores$Actuals, predictedScores=ActualsAndScores$PredictedScores)
 }
 \author{
-Selva Prabhakaran
+Selva Prabhakaran \email{selva86@gmail.com}
 }
 

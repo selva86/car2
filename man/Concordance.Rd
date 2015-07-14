@@ -13,6 +13,12 @@ Concordance(actuals, predictedScores)
 }
 \value{
 a list containing percentage of concordant pairs, percentage discordant pairs, percentage ties and No. of pairs.
+\itemize{
+  \item Concordance The total proportion of pairs in concordance. A pair is said to be concordant when the predicted score of 'Good' (Event) is greater than that of the 'Bad'(Non-event)
+  \item Discordance The total proportion of pairs that are discordant.
+  \item Tied The proportion of pairs for which scores are tied.
+  \item Pairs The total possible combinations of 'Good-Bad' pairs based on actual response (1/0) labels.
+}
 }
 \description{
 Calculate concordance and discordance percentages for a logit model
@@ -25,6 +31,6 @@ data('ActualsAndScores')
 Concordance(actuals=ActualsAndScores$Actuals, predictedScores=ActualsAndScores$PredictedScores)
 }
 \author{
-Selva Prabhakaran
+Selva Prabhakaran \email{selva86@gmail.com}
 }
 

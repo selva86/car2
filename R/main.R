@@ -1,11 +1,17 @@
 #' @title Concordance
 #' @description Calculate concordance and discordance percentages for a logit model
 #' @details Calculate the percentage of concordant and discordant pairs for a given logit model.
-#' @author Selva Prabhakaran
+#' @author Selva Prabhakaran \email{selva86@@gmail.com}
 #' @export Concordance
 #' @param actuals The actual binary flags for the response variable. It can take values of either 1 or 0, where 1 represents the 'Good' or 'Events' while 0 represents 'Bad' or 'Non-Events'.
 #' @param predictedScores The prediction probability scores for each observation.
 #' @return a list containing percentage of concordant pairs, percentage discordant pairs, percentage ties and No. of pairs.
+#' \itemize{
+#'   \item Concordance The total proportion of pairs in concordance. A pair is said to be concordant when the predicted score of 'Good' (Event) is greater than that of the 'Bad'(Non-event)
+#'   \item Discordance The total proportion of pairs that are discordant.
+#'   \item Tied The proportion of pairs for which scores are tied.
+#'   \item Pairs The total possible combinations of 'Good-Bad' pairs based on actual response (1/0) labels.
+#' }
 #' @examples
 #' data('ActualsAndScores')
 #' Concordance(actuals=ActualsAndScores$Actuals, predictedScores=ActualsAndScores$PredictedScores)
@@ -33,7 +39,7 @@ Concordance <- function (actuals, predictedScores){
 #' @title somersD
 #' @description Calculate the Somers D statistic for a given logit model
 #' @details For a given binary response actuals and predicted probability scores, Somer's D is calculated as the number of concordant pairs less number of discordant pairs divided by total number of pairs.
-#' @author Selva Prabhakaran
+#' @author Selva Prabhakaran \email{selva86@@gmail.com}
 #' @export somersD
 #' @param actuals The actual binary flags for the response variable. It can take values of either 1 or 0, where 1 represents the 'Good' or 'Events' while 0 represents 'Bad' or 'Non-Events'.
 #' @param predictedScores The prediction probability scores for each observation.
@@ -53,7 +59,7 @@ somersD <- function(actuals, predictedScores){
 #' @title misClassError
 #' @description Calculate the percentage misclassification error for this logit model's fitted values.
 #' @details For a given binary response actuals and predicted probability scores, misclassfication error is the number of mismatches between the predicted and actuals direction of the binary y variable.
-#' @author Selva Prabhakaran
+#' @author Selva Prabhakaran \email{selva86@@gmail.com}
 #' @export misClassError
 #' @param actuals The actual binary flags for the response variable. It can take values of either 1 or 0, where 1 represents the 'Good' or 'Events' while 0 represents 'Bad' or 'Non-Events'.
 #' @param predictedScores The prediction probability scores for each observation.
@@ -77,7 +83,7 @@ misClassError <- function(actuals, predictedScores, threshold=0.5){
 #' @title sensitivity
 #' @description Calculate the sensitivity for a given logit model.
 #' @details For a given binary response actuals and predicted probability scores, sensitivity is defined as number of observations with the event AND predicted to have the event divided by the number of observations with the event. It can be used as an indicator to gauge how sensitive is your model in detecting the occurence of events, especially when you are not so concerned about predicting the non-events as true.
-#' @author Selva Prabhakaran
+#' @author Selva Prabhakaran \email{selva86@@gmail.com}
 #' @export sensitivity
 #' @param actuals The actual binary flags for the response variable. It can take values of either 1 or 0, where 1 represents the 'Good' or 'Events' while 0 represents 'Bad' or 'Non-Events'.
 #' @param predictedScores The prediction probability scores for each observation.
@@ -101,7 +107,7 @@ sensitivity <- function(actuals, predictedScores, threshold=0.5){
 #' @title specificity
 #' @description Calculate the specificity for a given logit model.
 #' @details For a given given binary response actuals and predicted probability scores, specificity is defined as number of observations without the event AND predicted to not have the event divided by the number of observations without the event. Specificity is particularly useful when you are extra careful not to predict a non event as an event, like in spam detection where you dont want to classify a genuine mail as spam(event) where it may be somewhat ok to occasionally classify a spam as a genuine mail(a non-event).
-#' @author Selva Prabhakaran
+#' @author Selva Prabhakaran \email{selva86@@gmail.com}
 #' @export specificity
 #' @param actuals The actual binary flags for the response variable. It can take values of either 1 or 0, where 1 represents the 'Good' or 'Events' while 0 represents 'Bad' or 'Non-Events'.
 #' @param predictedScores The prediction probability scores for each observation.
@@ -126,7 +132,7 @@ specificity <- function(actuals, predictedScores, threshold=0.5){
 #' @title youdensIndex
 #' @description Calculate the specificity for a given logit model.
 #' @details For a given binary response actuals and predicted probability scores, Youden's index is calculated as sensitivity + specificity - 1
-#' @author Selva Prabhakaran
+#' @author Selva Prabhakaran \email{selva86@@gmail.com}
 #' @export youdensIndex
 #' @param actuals The actual binary flags for the response variable. It can take values of either 1 or 0, where 1 represents the 'Good' or 'Events' while 0 represents 'Bad' or 'Non-Events'.
 #' @param predictedScores The prediction probability scores for each observation.
@@ -149,7 +155,7 @@ youdensIndex <- function(actuals, predictedScores, threshold=0.5){
 #' @title confusionMatrix
 #' @description Calculate the confusion matrix for the fitted values for a logistic regression model.
 #' @details For a given actuals and predicted probability scores, the confusion matrix showing the count of predicted events and non-events against actual events and non events.
-#' @author Selva Prabhakaran
+#' @author Selva Prabhakaran \email{selva86@@gmail.com}
 #' @export confusionMatrix
 #' @param actuals The actual binary flags for the response variable. It can take values of either 1 or 0, where 1 represents the 'Good' or 'Events' while 0 represents 'Bad' or 'Non-Events'.
 #' @param predictedScores The prediction probability scores for each observation.
@@ -171,7 +177,7 @@ confusionMatrix <- function(actuals, predictedScores, threshold=0.5){
 #' @title kappaCohen
 #' @description Calculate the Cohen's kappa statistic for a given logit model.
 #' @details For a given actuals and predicted probability scores, Cohen's kappa is calculated. Cohen's kappa is calculated as (probabiliity of agreement - probability of expected) / (1-(probability of expected)))
-#' @author Selva Prabhakaran
+#' @author Selva Prabhakaran \email{selva86@@gmail.com}
 #' @export kappaCohen
 #' @param actuals The actual binary flags for the response variable. It can take values of either 1 or 0, where 1 represents the 'Good' or 'Events' while 0 represents 'Bad' or 'Non-Events'.
 #' @param predictedScores The prediction probability scores for each observation.
@@ -204,7 +210,7 @@ getFprTpr<- function(actuals, predictedScores, threshold=0.5){
 #' @title AUROC
 #' @description Calculate the area uder ROC curve statistic for a given logit model.
 #' @details For a given actuals and predicted probability scores, the area under the ROC curve shows how well the model performs at capturing the false events and false non-events. An best case model will have an area of 1. However that would be unrealistic, so the closer the aROC to 1, the better is the model.
-#' @author Selva Prabhakaran
+#' @author Selva Prabhakaran \email{selva86@@gmail.com}
 #' @export AUROC
 #' @param actuals The actual binary flags for the response variable. It can take values of either 1 or 0, where 1 represents the 'Good' or 'Events' while 0 represents 'Bad' or 'Non-Events'.
 #' @param predictedScores The prediction probability scores for each observation.
@@ -266,18 +272,18 @@ AUROC <- function(actuals, predictedScores){
 #' @title plotROC
 #' @description Plot the Receiver Operating Characteristics(ROC) Curve based on ggplot2
 #' @details For a given actuals and predicted probability scores, A ROC curve is plotted using the ggplot2 framework along the the area under the curve.
-#' @author Selva Prabhakaran
+#' @author Selva Prabhakaran \email{selva86@@gmail.com}
 #' @export plotROC
 #' @param actuals The actual binary flags for the response variable. It can take values of either 1 or 0, where 1 represents the 'Good' or 'Events' while 0 represents 'Bad' or 'Non-Events'.
 #' @param predictedScores The prediction probability scores for each observation.
 #' @param Show.labels Whether the probability scores should be printed at change points?. Defaults to False.
-#' @param threshold If predicted value is above the threshold, it will be considered as an event (1), else it will be a non-event (0). Defaults to 0.5.
+#' @param returnSensitivityMat Whether the sensitivity matrix (a dataframe) should be returned. Defaults to FALSE.
 #' @return Plots the ROC curve
 #' @import ggplot2
 #' @examples
 #' data('ActualsAndScores')
 #' plotROC(actuals=ActualsAndScores$Actuals, predictedScores=ActualsAndScores$PredictedScores)
-plotROC <- function(actuals, predictedScores, threshold=0.5, Show.labels=F){
+plotROC <- function(actuals, predictedScores, Show.labels=F, returnSensitivityMat=F){
 
   One_minus_specificity <- Threshold.show <- NULL  # setting to NULL to avoid NOTE while doing devtools::check
 
@@ -334,6 +340,11 @@ plotROC <- function(actuals, predictedScores, threshold=0.5, Show.labels=F){
             axis.title.x=element_text(size=15, colour = "steelblue"),
             axis.title.y=element_text(size=15, colour = "steelblue")) +  geom_text(aes(size=0.1))
   }
+
+  if(returnSensitivityMat){
+    return(df)
+  }
+
 }
 
 # Sample Run:

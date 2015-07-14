@@ -4,16 +4,16 @@
 \alias{plotROC}
 \title{plotROC}
 \usage{
-plotROC(actuals, predictedScores, threshold = 0.5, Show.labels = F)
+plotROC(actuals, predictedScores, Show.labels = F, returnSensitivityMat = F)
 }
 \arguments{
 \item{actuals}{The actual binary flags for the response variable. It can take values of either 1 or 0, where 1 represents the 'Good' or 'Events' while 0 represents 'Bad' or 'Non-Events'.}
 
 \item{predictedScores}{The prediction probability scores for each observation.}
 
-\item{threshold}{If predicted value is above the threshold, it will be considered as an event (1), else it will be a non-event (0). Defaults to 0.5.}
-
 \item{Show.labels}{Whether the probability scores should be printed at change points?. Defaults to False.}
+
+\item{returnSensitivityMat}{Whether the sensitivity matrix (a dataframe) should be returned. Defaults to FALSE.}
 }
 \value{
 Plots the ROC curve
@@ -29,6 +29,6 @@ data('ActualsAndScores')
 plotROC(actuals=ActualsAndScores$Actuals, predictedScores=ActualsAndScores$PredictedScores)
 }
 \author{
-Selva Prabhakaran
+Selva Prabhakaran \email{selva86@gmail.com}
 }
 

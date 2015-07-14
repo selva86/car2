@@ -28,6 +28,6 @@ misClassError(actuals=ActualsAndScores$Actuals,
   predictedScores=ActualsAndScores$PredictedScores, threshold=0.5)
 }
 \author{
-Selva Prabhakaran
+Selva Prabhakaran \email{selva86@gmail.com}
 }
 
