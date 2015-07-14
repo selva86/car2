@@ -3,8 +3,8 @@
 #' @details Calculate the percentage of concordant and discordant pairs for a given logit model.
 #' @author Selva Prabhakaran \email{selva86@@gmail.com}
 #' @export Concordance
-#' @param actuals The actual binary flags for the response variable. It can take values of either 1 or 0, where 1 represents the 'Good' or 'Events' while 0 represents 'Bad' or 'Non-Events'.
-#' @param predictedScores The prediction probability scores for each observation.
+#' @param actuals The actual binary flags for the response variable. It can take a numeric vector containing values of either 1 or 0, where 1 represents the 'Good' or 'Events' while 0 represents 'Bad' or 'Non-Events'.
+#' @param predictedScores The prediction probability scores for each observation. If your classification model gives the 1/0 predcitions, convert it to a numeric vector of 1's and 0's.
 #' @return a list containing percentage of concordant pairs, percentage discordant pairs, percentage ties and No. of pairs.
 #' \itemize{
 #'   \item Concordance The total proportion of pairs in concordance. A pair is said to be concordant when the predicted score of 'Good' (Event) is greater than that of the 'Bad'(Non-event)
@@ -41,8 +41,8 @@ Concordance <- function (actuals, predictedScores){
 #' @details For a given binary response actuals and predicted probability scores, Somer's D is calculated as the number of concordant pairs less number of discordant pairs divided by total number of pairs.
 #' @author Selva Prabhakaran \email{selva86@@gmail.com}
 #' @export somersD
-#' @param actuals The actual binary flags for the response variable. It can take values of either 1 or 0, where 1 represents the 'Good' or 'Events' while 0 represents 'Bad' or 'Non-Events'.
-#' @param predictedScores The prediction probability scores for each observation.
+#' @param actuals The actual binary flags for the response variable. It can take a numeric vector containing values of either 1 or 0, where 1 represents the 'Good' or 'Events' while 0 represents 'Bad' or 'Non-Events'.
+#' @param predictedScores The prediction probability scores for each observation. If your classification model gives the 1/0 predcitions, convert it to a numeric vector of 1's and 0's.
 #' @return The Somers D statistic, which tells how many more concordant than discordant pairs exist divided by total number of pairs.
 #' @examples
 #' data('ActualsAndScores')
@@ -61,8 +61,8 @@ somersD <- function(actuals, predictedScores){
 #' @details For a given binary response actuals and predicted probability scores, misclassfication error is the number of mismatches between the predicted and actuals direction of the binary y variable.
 #' @author Selva Prabhakaran \email{selva86@@gmail.com}
 #' @export misClassError
-#' @param actuals The actual binary flags for the response variable. It can take values of either 1 or 0, where 1 represents the 'Good' or 'Events' while 0 represents 'Bad' or 'Non-Events'.
-#' @param predictedScores The prediction probability scores for each observation.
+#' @param actuals The actual binary flags for the response variable. It can take a numeric vector containing values of either 1 or 0, where 1 represents the 'Good' or 'Events' while 0 represents 'Bad' or 'Non-Events'.
+#' @param predictedScores The prediction probability scores for each observation. If your classification model gives the 1/0 predcitions, convert it to a numeric vector of 1's and 0's.
 #' @param threshold If predicted value is above the threshold, it will be considered as an event (1), else it will be a non-event (0). Defaults to 0.5.
 #' @return The misclassification error, which tells what proportion of predicted direction did not match with the actuals.
 #' @examples
@@ -85,8 +85,8 @@ misClassError <- function(actuals, predictedScores, threshold=0.5){
 #' @details For a given binary response actuals and predicted probability scores, sensitivity is defined as number of observations with the event AND predicted to have the event divided by the number of observations with the event. It can be used as an indicator to gauge how sensitive is your model in detecting the occurence of events, especially when you are not so concerned about predicting the non-events as true.
 #' @author Selva Prabhakaran \email{selva86@@gmail.com}
 #' @export sensitivity
-#' @param actuals The actual binary flags for the response variable. It can take values of either 1 or 0, where 1 represents the 'Good' or 'Events' while 0 represents 'Bad' or 'Non-Events'.
-#' @param predictedScores The prediction probability scores for each observation.
+#' @param actuals The actual binary flags for the response variable. It can take a numeric vector containing values of either 1 or 0, where 1 represents the 'Good' or 'Events' while 0 represents 'Bad' or 'Non-Events'.
+#' @param predictedScores The prediction probability scores for each observation. If your classification model gives the 1/0 predcitions, convert it to a numeric vector of 1's and 0's.
 #' @param threshold If predicted value is above the threshold, it will be considered as an event (1), else it will be a non-event (0). Defaults to 0.5.
 #' @return The sensitivity of the given binary response actuals and predicted probability scores, which is, the number of observations with the event AND predicted to have the event divided by the nummber of observations with the event.
 #' @examples
@@ -109,8 +109,8 @@ sensitivity <- function(actuals, predictedScores, threshold=0.5){
 #' @details For a given given binary response actuals and predicted probability scores, specificity is defined as number of observations without the event AND predicted to not have the event divided by the number of observations without the event. Specificity is particularly useful when you are extra careful not to predict a non event as an event, like in spam detection where you dont want to classify a genuine mail as spam(event) where it may be somewhat ok to occasionally classify a spam as a genuine mail(a non-event).
 #' @author Selva Prabhakaran \email{selva86@@gmail.com}
 #' @export specificity
-#' @param actuals The actual binary flags for the response variable. It can take values of either 1 or 0, where 1 represents the 'Good' or 'Events' while 0 represents 'Bad' or 'Non-Events'.
-#' @param predictedScores The prediction probability scores for each observation.
+#' @param actuals The actual binary flags for the response variable. It can take a numeric vector containing values of either 1 or 0, where 1 represents the 'Good' or 'Events' while 0 represents 'Bad' or 'Non-Events'.
+#' @param predictedScores The prediction probability scores for each observation. If your classification model gives the 1/0 predcitions, convert it to a numeric vector of 1's and 0's.
 #' @param threshold If predicted value is above the threshold, it will be considered as an event (1), else it will be a non-event (0). Defaults to 0.5.
 #' @return The specificity of the given binary response actuals and predicted probability scores, which is, the number of observations without the event AND predicted to not have the event divided by the nummber of observations without the event.
 #' @examples
@@ -134,8 +134,8 @@ specificity <- function(actuals, predictedScores, threshold=0.5){
 #' @details For a given binary response actuals and predicted probability scores, Youden's index is calculated as sensitivity + specificity - 1
 #' @author Selva Prabhakaran \email{selva86@@gmail.com}
 #' @export youdensIndex
-#' @param actuals The actual binary flags for the response variable. It can take values of either 1 or 0, where 1 represents the 'Good' or 'Events' while 0 represents 'Bad' or 'Non-Events'.
-#' @param predictedScores The prediction probability scores for each observation.
+#' @param actuals The actual binary flags for the response variable. It can take a numeric vector containing values of either 1 or 0, where 1 represents the 'Good' or 'Events' while 0 represents 'Bad' or 'Non-Events'.
+#' @param predictedScores The prediction probability scores for each observation. If your classification model gives the 1/0 predcitions, convert it to a numeric vector of 1's and 0's.
 #' @param threshold If predicted value is above the threshold, it will be considered as an event (1), else it will be a non-event (0). Defaults to 0.5.
 #' @return The youdensIndex of the given binary response actuals and predicted probability scores, which is calculated as Sensitivity + Specificity - 1
 #' @examples
@@ -157,8 +157,8 @@ youdensIndex <- function(actuals, predictedScores, threshold=0.5){
 #' @details For a given actuals and predicted probability scores, the confusion matrix showing the count of predicted events and non-events against actual events and non events.
 #' @author Selva Prabhakaran \email{selva86@@gmail.com}
 #' @export confusionMatrix
-#' @param actuals The actual binary flags for the response variable. It can take values of either 1 or 0, where 1 represents the 'Good' or 'Events' while 0 represents 'Bad' or 'Non-Events'.
-#' @param predictedScores The prediction probability scores for each observation.
+#' @param actuals The actual binary flags for the response variable. It can take a numeric vector containing values of either 1 or 0, where 1 represents the 'Good' or 'Events' while 0 represents 'Bad' or 'Non-Events'.
+#' @param predictedScores The prediction probability scores for each observation. If your classification model gives the 1/0 predcitions, convert it to a numeric vector of 1's and 0's.
 #' @param threshold If predicted value is above the threshold, it will be considered as an event (1), else it will be a non-event (0). Defaults to 0.5.
 #' @return For a given actuals and predicted probability scores, returns the confusion matrix showing the count of predicted events and non-events against actual events and non events.
 #' @examples
@@ -179,8 +179,8 @@ confusionMatrix <- function(actuals, predictedScores, threshold=0.5){
 #' @details For a given actuals and predicted probability scores, Cohen's kappa is calculated. Cohen's kappa is calculated as (probabiliity of agreement - probability of expected) / (1-(probability of expected)))
 #' @author Selva Prabhakaran \email{selva86@@gmail.com}
 #' @export kappaCohen
-#' @param actuals The actual binary flags for the response variable. It can take values of either 1 or 0, where 1 represents the 'Good' or 'Events' while 0 represents 'Bad' or 'Non-Events'.
-#' @param predictedScores The prediction probability scores for each observation.
+#' @param actuals The actual binary flags for the response variable. It can take a numeric vector containing values of either 1 or 0, where 1 represents the 'Good' or 'Events' while 0 represents 'Bad' or 'Non-Events'.
+#' @param predictedScores The prediction probability scores for each observation. If your classification model gives the 1/0 predcitions, convert it to a numeric vector of 1's and 0's.
 #' @param threshold If predicted value is above the threshold, it will be considered as an event (1), else it will be a non-event (0). Defaults to 0.5.
 #' @return The Cohen's kappa of the given actuals and predicted probability scores
 #' @examples
@@ -212,8 +212,8 @@ getFprTpr<- function(actuals, predictedScores, threshold=0.5){
 #' @details For a given actuals and predicted probability scores, the area under the ROC curve shows how well the model performs at capturing the false events and false non-events. An best case model will have an area of 1. However that would be unrealistic, so the closer the aROC to 1, the better is the model.
 #' @author Selva Prabhakaran \email{selva86@@gmail.com}
 #' @export AUROC
-#' @param actuals The actual binary flags for the response variable. It can take values of either 1 or 0, where 1 represents the 'Good' or 'Events' while 0 represents 'Bad' or 'Non-Events'.
-#' @param predictedScores The prediction probability scores for each observation.
+#' @param actuals The actual binary flags for the response variable. It can take a numeric vector containing values of either 1 or 0, where 1 represents the 'Good' or 'Events' while 0 represents 'Bad' or 'Non-Events'.
+#' @param predictedScores The prediction probability scores for each observation. If your classification model gives the 1/0 predcitions, convert it to a numeric vector of 1's and 0's.
 #' @return The area under the ROC curve for a given logit model.
 #' @examples
 #' data('ActualsAndScores')
@@ -274,8 +274,8 @@ AUROC <- function(actuals, predictedScores){
 #' @details For a given actuals and predicted probability scores, A ROC curve is plotted using the ggplot2 framework along the the area under the curve.
 #' @author Selva Prabhakaran \email{selva86@@gmail.com}
 #' @export plotROC
-#' @param actuals The actual binary flags for the response variable. It can take values of either 1 or 0, where 1 represents the 'Good' or 'Events' while 0 represents 'Bad' or 'Non-Events'.
-#' @param predictedScores The prediction probability scores for each observation.
+#' @param actuals The actual binary flags for the response variable. It can take a numeric vector containing values of either 1 or 0, where 1 represents the 'Good' or 'Events' while 0 represents 'Bad' or 'Non-Events'.
+#' @param predictedScores The prediction probability scores for each observation. If your classification model gives the 1/0 predcitions, convert it to a numeric vector of 1's and 0's.
 #' @param Show.labels Whether the probability scores should be printed at change points?. Defaults to False.
 #' @param returnSensitivityMat Whether the sensitivity matrix (a dataframe) should be returned. Defaults to FALSE.
 #' @return Plots the ROC curve
@@ -342,7 +342,7 @@ plotROC <- function(actuals, predictedScores, Show.labels=F, returnSensitivityMa
   }
 
   if(returnSensitivityMat){
-    return(df)
+    return(df[, c(1:3)])
   }
 
 }
