@@ -314,20 +314,26 @@ plotROC <- function(actuals, predictedScores, threshold=0.5, Show.labels=F){
 
   # Plot it
   bp <- ggplot(df, aes(One_minus_specificity, sensitivity, label=Threshold.show))
-  bp1 <- bp + geom_ribbon(color="#3399FF", fill="#3399FF", aes(ymin=0, ymax=sensitivity)) +
+
+
+  # If Show.labels is TRUE, then display the labels.
+  if(!Show.labels){
+    bp + geom_ribbon(color="#3399FF", fill="#3399FF", aes(ymin=0, ymax=sensitivity)) +
     labs(title="ROC Curve", x="1-Specificity", y="Sensitivity") +
     annotate("text", label=paste("AUROC:", round(AREAROC, 4)), x=0.55, y=0.35, colour="white", size=8) +
     theme(legend.position="none",
           plot.title=element_text(size=20, colour = "steelblue"),
           axis.title.x=element_text(size=15, colour = "steelblue"),
           axis.title.y=element_text(size=15, colour = "steelblue"))
-  bp1  # display the plot
-
-  # show throeshold labels
-  if(Show.labels){
-    bp1 + geom_text(aes(size=0.1))
+  } else {
+    bp + geom_ribbon(color="#3399FF", fill="#3399FF", aes(ymin=0, ymax=sensitivity)) +
+      labs(title="ROC Curve", x="1-Specificity", y="Sensitivity") +
+      annotate("text", label=paste("AUROC:", round(AREAROC, 4)), x=0.55, y=0.35, colour="white", size=8) +
+      theme(legend.position="none",
+            plot.title=element_text(size=20, colour = "steelblue"),
+            axis.title.x=element_text(size=15, colour = "steelblue"),
+            axis.title.y=element_text(size=15, colour = "steelblue")) +  geom_text(aes(size=0.1))
   }
-
 }
 
 # Sample Run:
