@@ -11,7 +11,10 @@ WOETable(X, Y, valueOfGood = 1)
 
 \item{Y}{The actual 1/0 flags for the binary response variable. It can take values of either 1 or 0, where 1 represents the 'Good' or 'Events' while 0 represents 'Bad' or 'Non-Events'.}
 
-\item{valueOfGood}{The value in Y that is used to represent 'Good' or the occurence of the event of interest. Defaults to 1.
+\item{valueOfGood}{The value in Y that is used to represent 'Good' or the occurence of the event of interest. Defaults to 1.}
+}
+\value{
+The WOE table with the respective weights of evidence for each group and the IV's.
 \itemize{
   \item CAT. The groups (levels) of the categorical X variable for which WOE is to be calculated.
   \item GOODS. The total number of "Goods" or "Events" in respective group.
@@ -21,10 +24,7 @@ WOETable(X, Y, valueOfGood = 1)
   \item PCT_B. The Percentage of 'Bads' or 'Non-Events' accounted for by respective group.
   \item WOE. The computed weights of evidence(WOE) for respective group. The WOE values can be used in place of the actual group itself, thereby producing a 'continuous' alternative.
   \item IV. The information value contributed by each group in the X. The sum of IVs is the total information value of the categorical X variable.
-}}
 }
-\value{
-The WOE table with the respective weights of evidence for each group and the IV's.
 }
 \description{
 Compute the WOETable that shows the Weights Of Evidence (WOE) for each group and respeective Information Values (IVs).
