@@ -283,6 +283,13 @@ plotROC <- function(actuals, predictedScores, threshold=0.5, Show.labels=F){
   df <- as.data.frame(matrix(numeric(51*2), ncol=2))# initialise
   names(df) <- c("One_minus_specificity", "sensitivity")  # give col names.
   rowcount = 1
+
+  # define getFprTpr here!
+  getFprTpr<- function(actuals, predictedScores, threshold=0.5){
+    return(list(1-specificity(actuals=actuals, predictedScores=predictedScores, threshold=threshold),
+                sensitivity(actuals=actuals, predictedScores=predictedScores, threshold=threshold)))
+  }
+
   for (threshold in seq(1, 0, by=-0.02)){
     df[rowcount, ] <- getFprTpr(actuals=actuals, predictedScores=predictedScores, threshold=threshold)
     rowcount <- rowcount + 1
