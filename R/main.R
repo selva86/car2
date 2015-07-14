@@ -213,8 +213,11 @@ getFprTpr<- function(actuals, predictedScores, threshold=0.5){
 #' data('ActualsAndScores')
 #' AUROC(actuals=ActualsAndScores$Actuals, predictedScores=ActualsAndScores$PredictedScores)
 AUROC <- function(actuals, predictedScores){
+  # get the number of rows in df
+  numrow = length(seq(max(predictedScores, 1, na.rm=T), (min(predictedScores, 0, na.rm=T)-0.02), by=-0.02))
+
   # create the x and y axis values in a df
-  df <- as.data.frame(matrix(numeric(51*2), ncol=2))# initialise
+  df <- as.data.frame(matrix(numeric(numrow*2), ncol=2))  # initialise
   names(df) <- c("One_minus_specificity", "sensitivity")  # give col names.
   rowcount = 1
 
@@ -223,12 +226,12 @@ AUROC <- function(actuals, predictedScores){
                 sensitivity(actuals=actuals, predictedScores=predictedScores, threshold=threshold)))
   }
 
-  for (threshold in seq(1, 0, by=-0.02)){
+  for (threshold in seq(max(predictedScores, 1, na.rm=T), (min(predictedScores, 0, na.rm=T)-0.02), by=-0.02)){
     df[rowcount, ] <- getFprTpr(actuals=actuals, predictedScores=predictedScores, threshold=threshold)
     rowcount <- rowcount + 1
   }
 
-  df <- data.frame(df, Threshold=seq(1, 0, by=-0.02))  # append threshold
+  df <- data.frame(df, Threshold=seq(max(predictedScores, 1, na.rm=T), (min(predictedScores, 0, na.rm=T)-0.02), by=-0.02))  # append threshold
 
   # Compute aROC.
   auROC <- 0  # initialise
@@ -278,9 +281,11 @@ plotROC <- function(actuals, predictedScores, threshold=0.5, Show.labels=F){
 
   One_minus_specificity <- Threshold.show <- NULL  # setting to NULL to avoid NOTE while doing devtools::check
 
+  # get the number of rows in df
+  numrow = length(seq(max(predictedScores, 1, na.rm=T), (min(predictedScores, 0, na.rm=T)-0.02), by=-0.02))
 
   # create the x(True positive) and y(False positive) axis values in a df
-  df <- as.data.frame(matrix(numeric(51*2), ncol=2))# initialise
+  df <- as.data.frame(matrix(numeric(numrow*2), ncol=2))# initialise
   names(df) <- c("One_minus_specificity", "sensitivity")  # give col names.
   rowcount = 1
 
@@ -290,14 +295,14 @@ plotROC <- function(actuals, predictedScores, threshold=0.5, Show.labels=F){
                 sensitivity(actuals=actuals, predictedScores=predictedScores, threshold=threshold)))
   }
 
-  for (threshold in seq(1, 0, by=-0.02)){
+  for (threshold in seq(max(predictedScores, 1, na.rm=T), (min(predictedScores, 0, na.rm=T)-0.02), by=-0.02)){
     df[rowcount, ] <- getFprTpr(actuals=actuals, predictedScores=predictedScores, threshold=threshold)
     rowcount <- rowcount + 1
   }
 
   AREAROC <- AUROC(actuals=actuals, predictedScores=predictedScores)  # compute area under ROC
 
-  df <- data.frame(df, Threshold=seq(1, 0, by=-0.02))  # append threshold
+  df <- data.frame(df, Threshold=seq(max(predictedScores, 1, na.rm=T), (min(predictedScores, 0, na.rm=T)-0.02), by=-0.02))  # append threshold
 
   df$Threshold.show <- rep(NA, nrow(df))
   # Adding Thresholds to show.
