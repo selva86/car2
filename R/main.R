@@ -12,8 +12,8 @@
 Concordance <- function (actuals, predictedScores){
   fitted <- data.frame (Actuals=actuals, PredictedScores=predictedScores) # actuals and fitted
   colnames(fitted) <- c('Actuals','PredictedScores') # rename columns
-  ones <- fitted[fitted$Actuals==1, ] # Subset ones
-  zeros <- fitted[fitted$Actuals==0, ] # Subsetzeros
+  ones <- na.omit(fitted[fitted$Actuals==1, ]) # Subset ones
+  zeros <- na.omit(fitted[fitted$Actuals==0, ]) # Subsetzeros
   totalPairs <- nrow (ones) * nrow (zeros) # calculate total number of pairs to check
   conc <- sum (c (vapply (ones$PredictedScores, function(x) {((x > zeros$PredictedScores))}, FUN.VALUE=logical(nrow(zeros)))))
   disc <- totalPairs - conc
