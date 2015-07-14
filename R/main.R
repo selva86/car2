@@ -15,7 +15,7 @@ Concordance <- function (actuals, predictedScores){
   ones <- na.omit(fitted[fitted$Actuals==1, ]) # Subset ones
   zeros <- na.omit(fitted[fitted$Actuals==0, ]) # Subsetzeros
   totalPairs <- nrow (ones) * nrow (zeros) # calculate total number of pairs to check
-  conc <- sum (c (vapply (ones$PredictedScores, function(x) {((x > zeros$PredictedScores))}, FUN.VALUE=logical(nrow(zeros)))))
+  conc <- sum (c (vapply (ones$PredictedScores, function(x) {((x > zeros$PredictedScores))}, FUN.VALUE=logical(nrow(zeros)))), na.rm=T)
   disc <- totalPairs - conc
 
   # Calc concordance, discordance and ties
@@ -66,7 +66,7 @@ somersD <- function(actuals, predictedScores){
 misClassError <- function(actuals, predictedScores, threshold=0.5){
   predicted_dir <- ifelse(predictedScores < threshold, 0, 1)
   actual_dir <- actuals
-  return(round(sum(predicted_dir != actual_dir)/length(actual_dir), 4))
+  return(round(sum(predicted_dir != actual_dir, na.rm=T)/length(actual_dir), 4))
 }
 
 # Sample run:
@@ -89,8 +89,8 @@ misClassError <- function(actuals, predictedScores, threshold=0.5){
 sensitivity <- function(actuals, predictedScores, threshold=0.5){
   predicted_dir <- ifelse(predictedScores < threshold, 0, 1)
   actual_dir <- actuals
-  no_with_and_predicted_to_have_event <- sum(actual_dir == 1 & predicted_dir == 1)
-  no_with_event <- sum(actual_dir == 1)
+  no_with_and_predicted_to_have_event <- sum(actual_dir == 1 & predicted_dir == 1, na.rm=T)
+  no_with_event <- sum(actual_dir == 1, na.rm=T)
   return(no_with_and_predicted_to_have_event/no_with_event)
 }
 
@@ -113,8 +113,8 @@ sensitivity <- function(actuals, predictedScores, threshold=0.5){
 specificity <- function(actuals, predictedScores, threshold=0.5){
   predicted_dir <- ifelse(predictedScores < threshold, 0, 1)
   actual_dir <- actuals
-  no_without_and_predicted_to_not_have_event <- sum(actual_dir != 1 & predicted_dir != 1)
-  no_without_event <- sum(actual_dir != 1)
+  no_without_and_predicted_to_not_have_event <- sum(actual_dir != 1 & predicted_dir != 1, na.rm=T)
+  no_without_event <- sum(actual_dir != 1, na.rm=T)
   return(no_without_and_predicted_to_not_have_event/no_without_event)
 }
 
@@ -393,14 +393,14 @@ WOETable <- function(X, Y, valueOfGood=1){
     # Load the number of goods and bads within each category.
     for(catg in levels(X)){  # catg => current category
       woeTable[woeTable$CAT == catg, c(3, 2)] <- table(Y[X==catg])  # assign the good and bad count for current category.
-      woeTable[woeTable$CAT == catg, "TOTAL"] <- sum(X==catg)
+      woeTable[woeTable$CAT == catg, "TOTAL"] <- sum(X==catg , na.rm=T)
     }
 
-    woeTable$PCT_G <- woeTable$GOODS/sum(woeTable$GOODS)  # compute % good
-    woeTable$PCT_B <- woeTable$BADS /sum(woeTable$BADS)  # compute % bad
+    woeTable$PCT_G <- woeTable$GOODS/sum(woeTable$GOODS, na.rm=T)  # compute % good
+    woeTable$PCT_B <- woeTable$BADS /sum(woeTable$BADS, na.rm=T)  # compute % bad
     woeTable$WOE <- log(woeTable$PCT_G / woeTable$PCT_B)  # compute WOE
     woeTable$IV <- (woeTable$PCT_G - woeTable$PCT_B) * woeTable$WOE  # compute IV
-    attr(woeTable, "iValue") <- sum(woeTable$IV)  # assign iv as attribute..
+    attr(woeTable, "iValue") <- sum(woeTable$IV, na.rm=T)  # assign iv as attribute..
     return(woeTable)
   } else {
     stop("WOE can't be computed because the Y is not binary.")
@@ -445,7 +445,7 @@ WOE <- function(X, Y, valueOfGood=1){
 #' IV(X=SimData$X.Cat, Y=SimData$Y.Binary)
 IV <- function(X, Y, valueOfGood=1){
   woeTable <- WOETable(X=X, Y=Y, valueOfGood=valueOfGood)
-  iv <- sum(woeTable[, "IV"])
+  iv <- sum(woeTable[, "IV"], na.rm=T)
 
   # describe predictive power.
   if(iv < 0.03) {
